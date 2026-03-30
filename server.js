@@ -38,6 +38,12 @@ app.get("/api/local-ip", (req, res) => {
   res.json({ ip });
 });
 
+// Return client IP to frontend
+app.get("/api/client-ip", (req, res) => {
+  const clientIP = req.ip || req.connection.remoteAddress;
+  res.json({ ip: clientIP });
+});
+
 // Proxy BioID API call (avoids CORS)
 app.post("/api/verify", async (req, res) => {
   const { host, port, requestId, key, encKey } = req.body;

@@ -208,6 +208,7 @@
       <div class="badge">LOCAL</div>
       <h1><span class="accent">Bio</span>ID<br>API Fetcher</h1>
       <p class="subtitle">iPad Service · Card Verification · Network Inspector</p>
+      <div id="client-ip-badge" class="badge" style="display:none">CLIENT IP: <span id="client-ip"></span></div>
     </header>
 
     <section class="card">
@@ -299,7 +300,15 @@
         }
         updateUrlPreview();
       })
-      .catch(() => {
+    // --- Get client IP ---
+    fetch("/api/client-ip")
+      .then((r) => r.json())
+      .then(({ ip }) => {
+        if (ip) {
+          $("client-ip").textContent = ip;
+          $("client-ip-badge").style.display = "block";
+        }
+      }).catch(() => {
         $("host").classList.remove("detecting");
         $("ip-badge").textContent = "✗ NOT FOUND";
         $("ip-badge").className = "ip-badge failed";
