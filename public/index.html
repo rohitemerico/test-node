@@ -263,25 +263,26 @@
       const requestId = document.getElementById("api-requestId").value;
       const key = document.getElementById("api-key").value;
       const encKey = document.getElementById("api-encKey").value;
-
-      const proxyUrl =
-        `http://${host}:3000/proxy/bioid` +
-        `?host=${encodeURIComponent(host)}` +
-        `&port=${encodeURIComponent(port)}` +
-        `&requestId=${encodeURIComponent(requestId)}` +
-        `&key=${encodeURIComponent(key)}` +
-        `&encKey=${encodeURIComponent(encKey)}`;
+      const url =
+        `http://${host}:${port}/MyBioIDAPI/getVerifyCardInfoExt` +
+        `?strRequestID=${encodeURIComponent(requestId)}` +
+        `&strKey=${encodeURIComponent(key)}` +
+        `&strEncKey=${encodeURIComponent(encKey)}`;
 
       try {
-        const res = await fetch(proxyUrl);
-        const text = await res.text();
-
+        const res = await fetch(url, {
+          method: "GET"
+        });
+        const text = await res.text(); // safer than json()
         document.getElementById("api-result").textContent = text;
       } catch (err) {
         document.getElementById("api-result").textContent =
-          "PROXY ERROR:\n" + err.message;
+          "url: " + url + "\n\n" +
+          "ERROR: " + err.message + "\n\n" +
+          "ERR: " + err;
       }
     };
+
     // Function to update API endpoint preview
     function updateApiEndpoint() {
       const host = document.getElementById("api-host").value || '192.168.1.x';
