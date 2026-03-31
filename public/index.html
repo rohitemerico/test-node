@@ -1,392 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>API + AES Workbench</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API + AES Workbench</title>
 
-<style>
-:root {
-  --bg: #f3efe6;
-  --panel: rgba(255, 251, 245, 0.9);
-  --text: #1f1a17;
-  --muted: #6d6258;
-  --accent: #c4552d;
-  --accent-strong: #8f3213;
-  --border: rgba(31, 26, 23, 0.12);
-  --shadow: 0 20px 60px rgba(68, 41, 28, 0.15);
-}
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --panel: rgba(255, 251, 245, 0.9);
+      --text: #1f1a17;
+      --muted: #6d6258;
+      --accent: #c4552d;
+      --accent-strong: #8f3213;
+      --border: rgba(31, 26, 23, 0.12);
+      --shadow: 0 20px 60px rgba(68, 41, 28, 0.15);
+    }
 
-* { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(196,85,45,0.22), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(126,144,91,0.18), transparent 25%),
-    linear-gradient(135deg, #efe4d1, #f7f3eb, #e8ddd0);
-  min-height: 100vh;
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-}
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(196, 85, 45, 0.22), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(126, 144, 91, 0.18), transparent 25%),
+        linear-gradient(135deg, #efe4d1, #f7f3eb, #e8ddd0);
+      min-height: 100vh;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
 
-main {
-  width: min(1000px, 100%);
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
+    main {
+      width: min(1000px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
 
-/* ================= API SECTION ================= */
+    /* ================= API SECTION ================= */
 
-.section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-  padding: 28px;
-}
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
 
-.section-title {
-  font-size: 28px;
-  margin-bottom: 6px;
-}
+    .section-title {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
 
-.section-sub {
-  color: var(--muted);
-  margin-bottom: 18px;
-}
+    .section-sub {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--muted);
-}
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
 
-input, textarea {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  font-family: inherit;
-  background: rgba(255,255,255,0.7);
-  outline: none;
-}
+    input,
+    textarea {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.7);
+      outline: none;
+    }
 
-input:focus, textarea:focus {
-  border-color: var(--accent);
-  background: white;
-}
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      background: white;
+    }
 
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
 
-button {
-  border: none;
-  border-radius: 999px;
-  padding: 12px 16px;
-  cursor: pointer;
-  font-weight: bold;
-}
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-.primary {
-  background: var(--accent);
-  color: white;
-}
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
 
-.primary:hover {
-  background: var(--accent-strong);
-}
+    .primary:hover {
+      background: var(--accent-strong);
+    }
 
-.secondary {
-  background: rgba(0,0,0,0.08);
-}
+    .secondary {
+      background: rgba(0, 0, 0, 0.08);
+    }
 
-.actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
 
-/* API result */
-.result {
-  margin-top: 18px;
-  padding: 14px;
-  background: #1a1a1a;
-  color: #ddd;
-  border-radius: 12px;
-  font-size: 12px;
-  white-space: pre-wrap;
-}
+    /* API result */
+    .result {
+      margin-top: 18px;
+      padding: 14px;
+      background: #1a1a1a;
+      color: #ddd;
+      border-radius: 12px;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
 
-/* API Endpoint Preview */
-.endpoint-preview {
-  margin-top: 16px;
-  padding: 12px;
-  background: rgba(196, 85, 45, 0.05);
-  border: 1px solid rgba(196, 85, 45, 0.2);
-  border-radius: 12px;
-}
+    /* API Endpoint Preview */
+    .endpoint-preview {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(196, 85, 45, 0.05);
+      border: 1px solid rgba(196, 85, 45, 0.2);
+      border-radius: 12px;
+    }
 
-.endpoint-label {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 4px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+    .endpoint-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-.endpoint-url {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 13px;
-  color: var(--accent);
-  word-break: break-all;
-  line-height: 1.4;
-}
+    .endpoint-url {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      word-break: break-all;
+      line-height: 1.4;
+    }
 
-/* ================= AES CARD ================= */
+    /* ================= AES CARD ================= */
 
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-  padding: 28px;
-}
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
 
-h1 {
-  margin: 0 0 8px;
-  font-size: 36px;
-  line-height: 1;
-}
+    h1 {
+      margin: 0 0 8px;
+      font-size: 36px;
+      line-height: 1;
+    }
 
-p {
-  color: var(--muted);
-  margin-bottom: 18px;
-}
+    p {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
 
-.status {
-  margin-top: 10px;
-  color: var(--accent-strong);
-}
+    .status {
+      margin-top: 10px;
+      color: var(--accent-strong);
+    }
 
-/* responsive */
-@media(max-width:700px){
-  .grid { grid-template-columns: 1fr; }
-}
-</style>
+    /* responsive */
+    @media(max-width:700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<main>
+  <main>
 
-<!-- ================= API FIRST ================= -->
-<section class="section">
+    <!-- ================= API FIRST ================= -->
+    <section class="section">
 
-  <div>
-    <div class="section-title">BioID API Fetcher</div>
-    <div class="section-sub">iPad Service · Network Inspector · Card Verification</div>
-  </div>
+      <div>
+        <div class="section-title">BioID API Fetcher</div>
+        <div class="section-sub">iPad Service · Network Inspector · Card Verification</div>
+      </div>
 
-  <div class="grid">
-    <label>
-      Host / IP
-      <input id="api-host" placeholder="192.168.1.x" value="192.168.1.10"/>
-    </label>
+      <div class="grid">
+        <label>
+          Host / IP
+          <input id="api-host" placeholder="192.168.1.x" value="192.168.1.28" />
+        </label>
 
-    <label>
-      Port
-      <input id="api-port" value="8080"/>
-    </label>
-  </div>
+        <label>
+          Port
+          <input id="api-port" value="8080" />
+        </label>
+      </div>
 
-  <div class="grid">
-    <label>
-      Request ID
-      <input id="api-requestId" value="REQ-2001"/>
-    </label>
+      <div class="grid">
+        <label>
+          Request ID
+          <input id="api-requestId" value="REQ-2001" />
+        </label>
 
-    <label>
-      API Key
-      <input id="api-key" value="test-key"/>
-    </label>
-  </div>
+        <label>
+          API Key
+          <input id="api-key" value="test-key" />
+        </label>
+      </div>
 
-  <label>
-    Encryption Key
-    <input id="api-encKey" value="client-encryption-key-123"/>
-  </label>
+      <label>
+        Encryption Key
+        <input id="api-encKey" value="client-encryption-key-123" />
+      </label>
 
-  <!-- API Endpoint Preview -->
-  <div class="endpoint-preview">
-    <div class="endpoint-label">API Endpoint:</div>
-    <div class="endpoint-url" id="api-endpoint">http://192.168.1.x:8080/MyBioIDAPI/getVerifyCardInfoExt?strRequestID=REQ-2001&strKey=test-key&strEncKey=client-encryption-key-123</div>
-  </div>
+      <!-- API Endpoint Preview -->
+      <div class="endpoint-preview">
+        <div class="endpoint-label">API Endpoint:</div>
+        <div class="endpoint-url" id="api-endpoint">
+          http://192.168.1.x:8080/MyBioIDAPI/getVerifyCardInfoExt?strRequestID=REQ-2001&strKey=test-key&strEncKey=client-encryption-key-123
+        </div>
+      </div>
 
-  <div class="actions">
-    <button class="primary" id="send-api">Send Request</button>
-  </div>
+      <div class="actions">
+        <button class="primary" id="send-api">Send Request</button>
+      </div>
 
-  <pre class="result" id="api-result">Waiting for request...</pre>
+      <pre class="result" id="api-result">Waiting for request...</pre>
 
-</section>
+    </section>
+  </main>
+
+  <script>
 
 
-<!-- ================= AES SECOND ================= -->
-<section class="card">
+    document.getElementById("send-api").onclick = async () => {
+      const resultBox = document.getElementById("api-result");
+      resultBox.textContent = "Sending...";
 
-  <h1>AES-256<br/>Workbench</h1>
-  <p>Encrypt and decrypt text using AES-256-CBC directly in browser.</p>
+      try {
+        const payload = {
+          host: document.getElementById("api-host").value,
+          port: document.getElementById("api-port").value,
+          requestId: document.getElementById("api-requestId").value,
+          key: document.getElementById("api-key").value,
+          encKey: document.getElementById("api-encKey").value
+        };
 
-  <div class="grid">
-    <label>
-      Secret Key
-      <input id="secret" type="password"/>
-    </label>
+        const url = `http://${payload.host}:${payload.port}/MyBioIDAPI/getVerifyCardInfoExt`;
 
-    <label>
-      Mode
-      <input value="AES-256-CBC" disabled/>
-    </label>
-  </div>
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-  <label>
-    Value
-    <textarea id="value"></textarea>
-  </label>
+        const text = await res.text();
 
-  <div class="actions">
-    <button class="primary" id="encrypt">Encrypt</button>
-    <button class="primary" id="decrypt">Decrypt</button>
-    <button class="secondary" id="copy">Copy</button>
-    <button class="secondary" type="reset">Clear</button>
-  </div>
+        try {
+          resultBox.textContent = JSON.stringify(JSON.parse(text), null, 2);
+        } catch {
+          resultBox.textContent = text;
+        }
 
-  <div class="status" id="status"></div>
+      } catch (err) {
+        resultBox.textContent = "Error: " + err.message;
+      }
+    };
 
-</section>
+    // Function to update API endpoint preview
+    function updateApiEndpoint() {
+      const host = document.getElementById("api-host").value || '192.168.1.x';
+      const port = document.getElementById("api-port").value || '8080';
+      const requestId = encodeURIComponent(document.getElementById("api-requestId").value || 'REQ-2001');
+      const key = encodeURIComponent(document.getElementById("api-key").value || 'test-key');
+      const encKey = encodeURIComponent(document.getElementById("api-encKey").value || 'client-encryption-key-123');
 
-</main>
+      const endpoint = `http://${host}:${port}/MyBioIDAPI/getVerifyCardInfoExt?strRequestID=${requestId}&strKey=${key}&strEncKey=${encKey}`;
+      document.getElementById("api-endpoint").textContent = endpoint;
+    }
 
-<script>
-const enc = new TextEncoder();
-const dec = new TextDecoder();
+    // Add event listeners to update endpoint preview on input
+    document.getElementById("api-host").addEventListener("input", updateApiEndpoint);
+    document.getElementById("api-port").addEventListener("input", updateApiEndpoint);
+    document.getElementById("api-requestId").addEventListener("input", updateApiEndpoint);
+    document.getElementById("api-key").addEventListener("input", updateApiEndpoint);
+    document.getElementById("api-encKey").addEventListener("input", updateApiEndpoint);
 
-function toB64(buf){
-  return btoa(String.fromCharCode(...buf));
-}
-function fromB64(b64){
-  return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-}
-
-async function keyIv(secret){
-  const hash = await crypto.subtle.digest("SHA-256", enc.encode(secret));
-  const keyBytes = new Uint8Array(hash);
-  const iv = keyBytes.slice(0,16);
-  const key = await crypto.subtle.importKey(
-    "raw",
-    keyBytes,
-    "AES-CBC",
-    false,
-    ["encrypt","decrypt"]
-  );
-  return {key, iv};
-}
-
-document.getElementById("encrypt").onclick = async () => {
-  const secret = document.getElementById("secret").value;
-  const data = document.getElementById("value").value;
-
-  const {key, iv} = await keyIv(secret);
-
-  const encData = await crypto.subtle.encrypt(
-    {name:"AES-CBC", iv},
-    key,
-    enc.encode(data)
-  );
-
-  document.getElementById("value").value = toB64(new Uint8Array(encData));
-  document.getElementById("status").textContent = "Encrypted";
-};
-
-document.getElementById("decrypt").onclick = async () => {
-  try {
-    const {key, iv} = await keyIv(document.getElementById("secret").value);
-    const decrypted = await crypto.subtle.decrypt(
-      {name:"AES-CBC", iv},
-      key,
-      fromB64(document.getElementById("value").value)
-    );
-
-    document.getElementById("value").value = dec.decode(decrypted);
-    document.getElementById("status").textContent = "Decrypted";
-  } catch {
-    document.getElementById("status").textContent = "Decryption failed";
-  }
-};
-
-document.getElementById("copy").onclick = async () => {
-  await navigator.clipboard.writeText(document.getElementById("value").value);
-  document.getElementById("status").textContent = "Copied";
-};
-
-document.getElementById("send-api").onclick = async () => {
-  const payload = {
-    host: document.getElementById("api-host").value,
-    port: document.getElementById("api-port").value,
-    requestId: document.getElementById("api-requestId").value,
-    key: document.getElementById("api-key").value,
-    encKey: document.getElementById("api-encKey").value
-  };
-
-  const res = await fetch("/api/verify", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
-  });
-
-  const data = await res.json();
-  document.getElementById("api-result").textContent =
-    JSON.stringify(data, null, 2);
-};
-
-// Function to update API endpoint preview
-function updateApiEndpoint() {
-  const host = document.getElementById("api-host").value || '192.168.1.x';
-  const port = document.getElementById("api-port").value || '8080';
-  const requestId = encodeURIComponent(document.getElementById("api-requestId").value || 'REQ-2001');
-  const key = encodeURIComponent(document.getElementById("api-key").value || 'test-key');
-  const encKey = encodeURIComponent(document.getElementById("api-encKey").value || 'client-encryption-key-123');
-
-  const endpoint = `http://${host}:${port}/MyBioIDAPI/getVerifyCardInfoExt?strRequestID=${requestId}&strKey=${key}&strEncKey=${encKey}`;
-  document.getElementById("api-endpoint").textContent = endpoint;
-}
-
-// Add event listeners to update endpoint preview on input
-document.getElementById("api-host").addEventListener("input", updateApiEndpoint);
-document.getElementById("api-port").addEventListener("input", updateApiEndpoint);
-document.getElementById("api-requestId").addEventListener("input", updateApiEndpoint);
-document.getElementById("api-key").addEventListener("input", updateApiEndpoint);
-document.getElementById("api-encKey").addEventListener("input", updateApiEndpoint);
-
-// Initialize endpoint preview on page load
-updateApiEndpoint();
-</script>
+    // Initialize endpoint preview on page load
+    updateApiEndpoint();
+  </script>
 
 </body>
+
 </html>
