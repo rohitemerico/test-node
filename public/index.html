@@ -257,39 +257,27 @@
   </main>
 
   <script>
-
-
     document.getElementById("send-api").onclick = async () => {
-      const resultBox = document.getElementById("api-result");
-      resultBox.textContent = "Sending...";
+      const host = document.getElementById("api-host").value;
+      const port = document.getElementById("api-port").value;
+      const requestId = document.getElementById("api-requestId").value;
+      const key = document.getElementById("api-key").value;
+      const encKey = document.getElementById("api-encKey").value;
+      const url =
+        `http://${host}:${port}/MyBioIDAPI/getVerifyCardInfoExt` +
+        `?strRequestID=${encodeURIComponent(requestId)}` +
+        `&strKey=${encodeURIComponent(key)}` +
+        `&strEncKey=${encodeURIComponent(encKey)}`;
 
       try {
-        const payload = {
-          host: document.getElementById("api-host").value,
-          port: document.getElementById("api-port").value,
-          requestId: document.getElementById("api-requestId").value,
-          key: document.getElementById("api-key").value,
-          encKey: document.getElementById("api-encKey").value
-        };
-
-        const url = `http://${payload.host}:${payload.port}/MyBioIDAPI/getVerifyCardInfoExt`;
-
         const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          method: "GET"
         });
-
-        const text = await res.text();
-
-        try {
-          resultBox.textContent = JSON.stringify(JSON.parse(text), null, 2);
-        } catch {
-          resultBox.textContent = text;
-        }
-
+        const text = await res.text(); // safer than json()
+        document.getElementById("api-result").textContent = text;
       } catch (err) {
-        resultBox.textContent = "Error: " + err.message;
+        document.getElementById("api-result").textContent =
+          "ERROR: " + err.message;
       }
     };
 
