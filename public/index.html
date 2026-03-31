@@ -265,7 +265,7 @@
       const encKey = document.getElementById("api-encKey").value;
 
       const proxyUrl =
-        `http://localhost:3000/proxy/bioid` +
+        `http://${host}:3000/proxy/bioid` +
         `?host=${encodeURIComponent(host)}` +
         `&port=${encodeURIComponent(port)}` +
         `&requestId=${encodeURIComponent(requestId)}` +
