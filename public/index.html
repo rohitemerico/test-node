@@ -9,7 +9,6 @@
   <style>
     :root {
       --accent: #c4552d;
-      --accent-strong: #8f3213;
       --border: rgba(31, 26, 23, 0.12);
     }
 
@@ -45,26 +44,26 @@
       font-weight: bold;
       color: #5a4f45;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       margin-bottom: 6px;
     }
 
-    input,
-    textarea {
+    input {
       width: 100%;
       padding: 12px;
       border-radius: 12px;
       border: 1px solid var(--border);
       font-family: inherit;
-      /* margin-bottom: 12px; */
     }
 
     textarea {
-      min-height: 180px;
-      resize: vertical;
+      width: 100%;
+      min-height: 140px;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
       background: #1a1a1a;
       color: #ddd;
-      border: none;
+      resize: vertical;
     }
 
     button {
@@ -92,7 +91,6 @@
       align-items: center;
     }
 
-    /* ================= GRID FOR INPUTS ================= */
     .input-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -103,6 +101,17 @@
       .input-grid {
         grid-template-columns: 1fr;
       }
+    }
+
+    pre {
+      background: #f4f1ea;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(31, 26, 23, 0.12);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: monospace;
+      min-height: 60px;
     }
 
     .status {
@@ -119,56 +128,61 @@
 
       <h2>MyKAD API Fetcher</h2>
 
-      <!-- ================= INPUT GRID ================= -->
+      <!-- INPUTS -->
       <div class="input-grid">
 
         <div>
           <div class="label">Host / IP</div>
-          <input id="api-host" value="192.168.1.28" />
+          <input id="api-host" value="192.168.1.28">
         </div>
 
         <div>
           <div class="label">Port</div>
-          <input id="api-port" value="8080" />
+          <input id="api-port" value="8080">
         </div>
 
         <div>
           <div class="label">Request ID</div>
-          <input id="api-requestId" value="REQ-2001" />
+          <input id="api-requestId" value="REQ-2001">
         </div>
 
         <div>
           <div class="label">API Key</div>
-          <input id="api-key" value="test-key" />
+          <input id="api-key" value="test-key">
         </div>
 
         <div style="grid-column: 1 / -1;">
           <div class="label">Encryption Key</div>
-          <input id="api-encKey" value="client-encryption-key-123" />
+          <input id="api-encKey" value="client-encryption-key-123">
         </div>
 
       </div>
 
-      <!-- BUTTON -->
+      <!-- ENDPOINT -->
+      <pre id="api-endpoint"></pre>
+
+      <!-- SEND -->
       <div class="row">
         <button class="primary" id="send-api">Send Request</button>
         <span id="api-status" class="status"></span>
       </div>
 
-      <!-- ================= API RESPONSE ================= -->
+      <!-- API RESPONSE -->
       <div class="row">
-        <textarea id="api-result" placeholder="Waiting for request..."></textarea>
+        <textarea id="api-result">Waiting for request...</textarea>
       </div>
+
       <!-- DECRYPT -->
       <div class="row">
         <button class="primary" id="decrypt-btn">Decrypt</button>
       </div>
 
-      <!-- ================= DECRYPTED OUTPUT ================= -->
+      <!-- DECRYPT RESULT -->
       <div class="row">
-        <textarea id="decrypt-result" placeholder="Decrypted output will appear here..."></textarea>
+        <textarea id="decrypt-result"></textarea>
       </div>
-      <!-- COPY + CLEAR -->
+
+      <!-- COPY / CLEAR -->
       <div class="row">
         <button class="secondary" id="copy-btn">Copy</button>
         <button class="secondary" id="clear-btn">Clear</button>
@@ -179,47 +193,45 @@
   </main>
 
   <script>
+
     const statusEl = document.getElementById("api-status");
 
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
 
-    function bytesToBase64(bytes) {
-      let binary = "";
-      bytes.forEach((byte) => {
-        binary += String.fromCharCode(byte);
-      });
-      return btoa(binary);
-    }
-
+    /* ================= BASE64 ================= */
     function base64ToBytes(base64) {
       const binary = atob(base64);
       const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) {
+      for (let i = 0; i < binary.length; i++) {
         bytes[i] = binary.charCodeAt(i);
       }
       return bytes;
     }
 
+    /* ================= KEY DERIVATION ================= */
     async function deriveKeyAndIv(secret) {
-      const secretHash = await crypto.subtle.digest(
+      const hash = await crypto.subtle.digest(
         "SHA-256",
         encoder.encode(secret)
       );
-      const keyBytes = new Uint8Array(secretHash);
+
+      const keyBytes = new Uint8Array(hash);
       const iv = keyBytes.slice(0, 16);
+
       const key = await crypto.subtle.importKey(
         "raw",
         keyBytes,
         { name: "AES-CBC" },
         false,
-        ["encrypt", "decrypt"]
+        ["decrypt"]
       );
 
       return { key, iv };
     }
 
-    document.getElementById("send-api").onclick = async () => {
+    /* ================= ENDPOINT ================= */
+    function updateEndpoint() {
       const host = document.getElementById("api-host").value;
       const port = document.getElementById("api-port").value;
       const requestId = document.getElementById("api-requestId").value;
@@ -231,6 +243,22 @@
         `?strRequestID=${encodeURIComponent(requestId)}` +
         `&strKey=${encodeURIComponent(key)}` +
         `&strEncKey=${encodeURIComponent(encKey)}`;
+
+      document.getElementById("api-endpoint").textContent = url;
+    }
+
+    /* live update */
+    ["api-host", "api-port", "api-requestId", "api-key", "api-encKey"]
+      .forEach(id => {
+        document.getElementById(id).addEventListener("input", updateEndpoint);
+      });
+
+    updateEndpoint();
+
+    /* ================= SEND API ================= */
+    document.getElementById("send-api").onclick = async () => {
+
+      const url = document.getElementById("api-endpoint").textContent;
 
       try {
         statusEl.textContent = "⏳ Sending...";
@@ -248,13 +276,14 @@
       }
     };
 
+    /* ================= DECRYPT ================= */
     document.getElementById("decrypt-btn").onclick = async () => {
+
       const secret = document.getElementById("api-encKey").value.trim();
       const input = document.getElementById("api-result").value.trim();
 
       if (!secret || !input) {
-        document.getElementById("api-status").textContent =
-          "Secret key and value are required.";
+        statusEl.textContent = "Secret or data missing";
         return;
       }
 
@@ -262,34 +291,36 @@
         const ciphertext = base64ToBytes(input);
         const { key, iv } = await deriveKeyAndIv(secret);
 
-        const plaintext = await crypto.subtle.decrypt(
+        const decrypted = await crypto.subtle.decrypt(
           { name: "AES-CBC", iv },
           key,
           ciphertext
         );
 
-        const decoded = new TextDecoder().decode(plaintext);
+        document.getElementById("decrypt-result").value =
+          decoder.decode(decrypted);
 
-        document.getElementById("decrypt-result").value = decoded;
-        document.getElementById("api-status").textContent = "✅ Decrypted";
+        statusEl.textContent = "✅ Decrypted";
 
       } catch (err) {
-        document.getElementById("api-status").textContent =
-          "❌ Unable to decrypt. Check key or Base64 data.";
+        statusEl.textContent = "❌ Decryption failed";
       }
     };
 
+    /* ================= COPY ================= */
     document.getElementById("copy-btn").onclick = () => {
-      const text = document.getElementById("decrypt-result");
-      text.select();
+      const el = document.getElementById("decrypt-result");
+      el.select();
       document.execCommand("copy");
-      statusEl.textContent = "📋 Copied!";
+      statusEl.textContent = "📋 Copied";
     };
 
+    /* ================= CLEAR ================= */
     document.getElementById("clear-btn").onclick = () => {
       document.getElementById("decrypt-result").value = "";
       statusEl.textContent = "🧹 Cleared";
     };
+
   </script>
 
 </body>
