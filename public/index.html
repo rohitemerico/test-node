@@ -257,16 +257,17 @@
 
     /* ================= SEND API ================= */
     document.getElementById("send-api").onclick = async () => {
-
       const url = document.getElementById("api-endpoint").textContent;
 
       try {
         statusEl.textContent = "⏳ Sending...";
 
         const res = await fetch(url);
-        const text = await res.text();
+        const data = await res.json(); // parse JSON
 
-        document.getElementById("api-result").value = text;
+        const value = data?.Result?.sVerifyCardInfoExt || "";
+
+        document.getElementById("api-result").value = value;
 
         statusEl.textContent = `✅ Success (${res.status})`;
 
