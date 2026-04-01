@@ -4,18 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API + AES Workbench</title>
+  <title>MyKAD API Fetcher</title>
 
   <style>
     :root {
-      --bg: #f3efe6;
-      --panel: rgba(255, 251, 245, 0.9);
-      --text: #1f1a17;
-      --muted: #6d6258;
       --accent: #c4552d;
       --accent-strong: #8f3213;
       --border: rgba(31, 26, 23, 0.12);
-      --shadow: 0 20px 60px rgba(68, 41, 28, 0.15);
     }
 
     * {
@@ -25,12 +20,7 @@
     body {
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(196, 85, 45, 0.22), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(126, 144, 91, 0.18), transparent 25%),
-        linear-gradient(135deg, #efe4d1, #f7f3eb, #e8ddd0);
-      min-height: 100vh;
+      background: linear-gradient(135deg, #efe4d1, #f7f3eb);
       padding: 24px;
       display: flex;
       justify-content: center;
@@ -40,68 +30,47 @@
       width: min(1000px, 100%);
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 24px;
     }
 
-    /* ================= API SECTION ================= */
-
     .section {
-      background: var(--panel);
+      background: rgba(255, 251, 245, 0.9);
       border: 1px solid var(--border);
       border-radius: 24px;
-      box-shadow: var(--shadow);
       padding: 28px;
     }
 
-    .section-title {
-      font-size: 28px;
-      margin-bottom: 6px;
-    }
-
-    .section-sub {
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .label {
       font-size: 13px;
-      color: var(--muted);
+      font-weight: bold;
+      color: #5a4f45;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
     }
 
     input,
     textarea {
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      width: 100%;
       padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
       font-family: inherit;
-      background: rgba(255, 255, 255, 0.7);
-      outline: none;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      background: white;
+      /* margin-bottom: 12px; */
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 180px;
       resize: vertical;
+      background: #1a1a1a;
+      color: #ddd;
+      border: none;
     }
 
     button {
       border: none;
       border-radius: 999px;
-      padding: 12px 16px;
+      padding: 10px 14px;
       cursor: pointer;
       font-weight: bold;
     }
@@ -111,89 +80,33 @@
       color: white;
     }
 
-    .primary:hover {
-      background: var(--accent-strong);
-    }
-
     .secondary {
       background: rgba(0, 0, 0, 0.08);
     }
 
-    .actions {
+    .row {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 10px;
+      align-items: center;
     }
 
-    /* API result */
-    .result {
-      margin-top: 18px;
-      padding: 14px;
-      background: #1a1a1a;
-      color: #ddd;
-      border-radius: 12px;
-      font-size: 12px;
-      white-space: pre-wrap;
+    /* ================= GRID FOR INPUTS ================= */
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
-    /* API Endpoint Preview */
-    .endpoint-preview {
-      margin-top: 16px;
-      padding: 12px;
-      background: rgba(196, 85, 45, 0.05);
-      border: 1px solid rgba(196, 85, 45, 0.2);
-      border-radius: 12px;
-    }
-
-    .endpoint-label {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 4px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .endpoint-url {
-      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-      font-size: 13px;
-      color: var(--accent);
-      word-break: break-all;
-      line-height: 1.4;
-    }
-
-    /* ================= AES CARD ================= */
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      padding: 28px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 36px;
-      line-height: 1;
-    }
-
-    p {
-      color: var(--muted);
-      margin-bottom: 18px;
+    @media (max-width: 700px) {
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .status {
-      margin-top: 10px;
-      color: var(--accent-strong);
-    }
-
-    /* responsive */
-    @media(max-width:700px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+      font-size: 13px;
     }
   </style>
 </head>
@@ -202,67 +115,117 @@
 
   <main>
 
-    <!-- ================= API FIRST ================= -->
     <section class="section">
 
-      <div>
-        <div class="section-title">BioID API Fetcher</div>
-        <div class="section-sub">iPad Service · Network Inspector · Card Verification</div>
-      </div>
+      <h2>MyKAD API Fetcher</h2>
 
-      <div class="grid">
-        <label>
-          Host / IP
-          <input id="api-host" placeholder="192.168.1.x" value="192.168.1.28" />
-        </label>
+      <!-- ================= INPUT GRID ================= -->
+      <div class="input-grid">
 
-        <label>
-          Port
-          <input id="api-port" value="8080" />
-        </label>
-      </div>
-
-      <div class="grid">
-        <label>
-          Request ID
-          <input id="api-requestId" value="REQ-2001" />
-        </label>
-
-        <label>
-          API Key
-          <input id="api-key" value="test-key" />
-        </label>
-      </div>
-
-      <label>
-        Encryption Key
-        <input id="api-encKey" value="client-encryption-key-123" />
-      </label>
-
-      <!-- API Endpoint Preview -->
-      <div class="endpoint-preview">
-        <div class="endpoint-label">API Endpoint:</div>
-        <div class="endpoint-url" id="api-endpoint">
-          http://192.168.1.x:8080/MyBioIDAPI/getVerifyCardInfoExt?strRequestID=REQ-2001&strKey=test-key&strEncKey=client-encryption-key-123
+        <div>
+          <div class="label">Host / IP</div>
+          <input id="api-host" value="192.168.1.28" />
         </div>
+
+        <div>
+          <div class="label">Port</div>
+          <input id="api-port" value="8080" />
+        </div>
+
+        <div>
+          <div class="label">Request ID</div>
+          <input id="api-requestId" value="REQ-2001" />
+        </div>
+
+        <div>
+          <div class="label">API Key</div>
+          <input id="api-key" value="test-key" />
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <div class="label">Encryption Key</div>
+          <input id="api-encKey" value="client-encryption-key-123" />
+        </div>
+
       </div>
 
-      <div class="actions">
+      <!-- BUTTON -->
+      <div class="row">
         <button class="primary" id="send-api">Send Request</button>
+        <span id="api-status" class="status"></span>
       </div>
 
-      <pre class="result" id="api-result">Waiting for request...</pre>
+      <!-- ================= API RESPONSE ================= -->
+      <div class="row">
+        <textarea id="api-result" placeholder="Waiting for request..."></textarea>
+      </div>
+      <!-- DECRYPT -->
+      <div class="row">
+        <button class="primary" id="decrypt-btn">Decrypt</button>
+      </div>
+
+      <!-- ================= DECRYPTED OUTPUT ================= -->
+      <div class="row">
+        <textarea id="decrypt-result" placeholder="Decrypted output will appear here..."></textarea>
+      </div>
+      <!-- COPY + CLEAR -->
+      <div class="row">
+        <button class="secondary" id="copy-btn">Copy</button>
+        <button class="secondary" id="clear-btn">Clear</button>
+      </div>
 
     </section>
+
   </main>
 
   <script>
+    const statusEl = document.getElementById("api-status");
+
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    function bytesToBase64(bytes) {
+      let binary = "";
+      bytes.forEach((byte) => {
+        binary += String.fromCharCode(byte);
+      });
+      return btoa(binary);
+    }
+
+    function base64ToBytes(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
+    async function deriveKeyAndIv(secret) {
+      const secretHash = await crypto.subtle.digest(
+        "SHA-256",
+        encoder.encode(secret)
+      );
+      const keyBytes = new Uint8Array(secretHash);
+      const iv = keyBytes.slice(0, 16);
+      const key = await crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        { name: "AES-CBC" },
+        false,
+        ["encrypt", "decrypt"]
+      );
+
+      return { key, iv };
+    }
+
     document.getElementById("send-api").onclick = async () => {
       const host = document.getElementById("api-host").value;
       const port = document.getElementById("api-port").value;
       const requestId = document.getElementById("api-requestId").value;
       const key = document.getElementById("api-key").value;
       const encKey = document.getElementById("api-encKey").value;
+
       const url =
         `http://${host}:${port}/MyBioIDAPI/getVerifyCardInfoExt` +
         `?strRequestID=${encodeURIComponent(requestId)}` +
@@ -270,40 +233,63 @@
         `&strEncKey=${encodeURIComponent(encKey)}`;
 
       try {
-        const res = await fetch(url, {
-          method: "GET"
-        });
-        const text = await res.text(); // safer than json()
-        document.getElementById("api-result").textContent = text;
+        statusEl.textContent = "⏳ Sending...";
+
+        const res = await fetch(url);
+        const text = await res.text();
+
+        document.getElementById("api-result").value = text;
+
+        statusEl.textContent = `✅ Success (${res.status})`;
+
       } catch (err) {
-        document.getElementById("api-result").textContent =
-          "url: " + url + "\n\n" +
-          "ERROR: " + err.message + "\n\n" +
-          "ERR: " + err;
+        document.getElementById("api-result").value = "ERROR: " + err.message;
+        statusEl.textContent = "❌ Failed";
       }
     };
 
-    // Function to update API endpoint preview
-    function updateApiEndpoint() {
-      const host = document.getElementById("api-host").value || '192.168.1.x';
-      const port = document.getElementById("api-port").value || '8080';
-      const requestId = encodeURIComponent(document.getElementById("api-requestId").value || 'REQ-2001');
-      const key = encodeURIComponent(document.getElementById("api-key").value || 'test-key');
-      const encKey = encodeURIComponent(document.getElementById("api-encKey").value || 'client-encryption-key-123');
+    document.getElementById("decrypt-btn").onclick = async () => {
+      const secret = document.getElementById("api-encKey").value.trim();
+      const input = document.getElementById("api-result").value.trim();
 
-      const endpoint = `http://${host}:${port}/MyBioIDAPI/getVerifyCardInfoExt?strRequestID=${requestId}&strKey=${key}&strEncKey=${encKey}`;
-      document.getElementById("api-endpoint").textContent = endpoint;
-    }
+      if (!secret || !input) {
+        document.getElementById("api-status").textContent =
+          "Secret key and value are required.";
+        return;
+      }
 
-    // Add event listeners to update endpoint preview on input
-    document.getElementById("api-host").addEventListener("input", updateApiEndpoint);
-    document.getElementById("api-port").addEventListener("input", updateApiEndpoint);
-    document.getElementById("api-requestId").addEventListener("input", updateApiEndpoint);
-    document.getElementById("api-key").addEventListener("input", updateApiEndpoint);
-    document.getElementById("api-encKey").addEventListener("input", updateApiEndpoint);
+      try {
+        const ciphertext = base64ToBytes(input);
+        const { key, iv } = await deriveKeyAndIv(secret);
 
-    // Initialize endpoint preview on page load
-    updateApiEndpoint();
+        const plaintext = await crypto.subtle.decrypt(
+          { name: "AES-CBC", iv },
+          key,
+          ciphertext
+        );
+
+        const decoded = new TextDecoder().decode(plaintext);
+
+        document.getElementById("decrypt-result").value = decoded;
+        document.getElementById("api-status").textContent = "✅ Decrypted";
+
+      } catch (err) {
+        document.getElementById("api-status").textContent =
+          "❌ Unable to decrypt. Check key or Base64 data.";
+      }
+    };
+
+    document.getElementById("copy-btn").onclick = () => {
+      const text = document.getElementById("decrypt-result");
+      text.select();
+      document.execCommand("copy");
+      statusEl.textContent = "📋 Copied!";
+    };
+
+    document.getElementById("clear-btn").onclick = () => {
+      document.getElementById("decrypt-result").value = "";
+      statusEl.textContent = "🧹 Cleared";
+    };
   </script>
 
 </body>
