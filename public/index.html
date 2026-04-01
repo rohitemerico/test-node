@@ -309,20 +309,19 @@
 
     /* ================= COPY ================= */
     document.getElementById("copy-btn").onclick = async () => {
-  const text = document.getElementById("decrypt-result").value;
+      const text = document.getElementById("decrypt-result").value;
+      if (!text) {
+        statusEl.textContent = "❌ Nothing to copy.";
+        return;
+      }
 
-  if (!text) {
-    statusEl.textContent = "❌ Nothing to copy.";
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(text);
-    statusEl.textContent = "📋 Copied to clipboard";
-  } catch (err) {
-    statusEl.textContent = "❌ Clipboard access failed";
-  }
-};
+      try {
+        await navigator.clipboard.writeText(text);
+        statusEl.textContent = "📋 Copied to clipboard";
+      } catch (err) {
+        statusEl.textContent = "❌ Clipboard access failed";
+      }
+    };
 
     /* ================= CLEAR ================= */
     document.getElementById("clear-btn").onclick = () => {
