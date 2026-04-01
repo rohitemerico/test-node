@@ -308,12 +308,21 @@
     };
 
     /* ================= COPY ================= */
-    document.getElementById("copy-btn").onclick = () => {
-      const el = document.getElementById("decrypt-result");
-      el.select();
-      document.execCommand("copy");
-      statusEl.textContent = "📋 Copied";
-    };
+    document.getElementById("copy-btn").onclick = async () => {
+  const text = document.getElementById("decrypt-result").value;
+
+  if (!text) {
+    statusEl.textContent = "❌ Nothing to copy.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    statusEl.textContent = "📋 Copied to clipboard";
+  } catch (err) {
+    statusEl.textContent = "❌ Clipboard access failed";
+  }
+};
 
     /* ================= CLEAR ================= */
     document.getElementById("clear-btn").onclick = () => {
